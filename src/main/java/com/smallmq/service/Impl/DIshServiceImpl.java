@@ -26,4 +26,19 @@ public class DIshServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
                 });
         dishFlavorService.saveBatch(dishDto.getFlavors());
     }
+
+    @Override
+    public void updateWithFlavor(DishDto dishDto) {
+        this.updateById(dishDto);
+        dishFlavorService.deleteByDishId(dishDto.getId());
+        dishDto.getFlavors().forEach(flavor -> {
+            flavor.setDishId(dishDto.getId());
+        });
+        dishFlavorService.saveBatch(dishDto.getFlavors());
+    }
+
+    @Override
+    public void deleteWithFlavor(DishDto dishDto) {
+
+    }
 }

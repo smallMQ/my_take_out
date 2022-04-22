@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.smallmq.dto.DishDto;
 import com.smallmq.pojo.Dish;
+import com.smallmq.pojo.DishFlavor;
 import com.smallmq.service.CategoryService;
 import com.smallmq.service.DishFlavorService;
 import com.smallmq.service.DishService;
@@ -75,7 +76,30 @@ public class DishController {
         return Response.success("添加成功");
     }
 
+    // 根据id查数据
+    @GetMapping("{id}")
+    public Response<DishDto> get(@PathVariable("id") Long id) {
+//        DishDto dishDto = dishService.getDishDtoById(id);
+        Dish dish = dishService.getById(id);
+        // 根据dish id 查询flavor
+        LambdaQueryWrapper<DishFlavor> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(DishFlavor::getDishId, id);
 
+        List<DishFlavor> dishFlavors = dishFlavorService.list(wrapper);
+
+        DishDto dishDto = new DishDto();
+        BeanUtils.copyProperties(dish, dishDto);
+        dishDto.setFlavors(dishFlavors);
+
+        return Response.success(dishDto);
+    }
+    // 根据id修改数据
+    @PutMapping
+    public Response<String> update(@RequestBody DishDto dishDto) {
+        dishService.updateWithFlavor(dishDto);
+        log.info("dishDto:{}", dishDto);
+        return Response.success("修改成功");
+    }
 
 
 }

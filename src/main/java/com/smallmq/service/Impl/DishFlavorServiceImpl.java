@@ -10,4 +10,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class DishFlavorServiceImpl extends ServiceImpl<DishFlavorMapper, DishFlavor> implements DishFlavorService {
 
+
+    @Override
+    public void deleteByDishId(Long dishId) {
+
+    }
+
+    @Override
+    public void insertByDishId(DishDto dishDto) {
+
+    }
 }
