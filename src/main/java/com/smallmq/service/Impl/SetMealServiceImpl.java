@@ -46,5 +46,13 @@ public class SetMealServiceImpl extends ServiceImpl<SetMealMapper, Setmeal> impl
 
     }
 
+    @Override
+    public void updateStatus(Integer status, Long[] ids) {
+        Setmeal setmeal = new Setmeal();
+        setmeal.setStatus(status);
+        this.update(setmeal, new LambdaQueryWrapper<Setmeal>().in(Setmeal::getId, ids));
+
+    }
+
 
 }

@@ -86,4 +86,13 @@ public class SetMealController {
 
         return Response.success(setmealDto);
     }
+
+    // 修改套餐状态
+    @PostMapping("/status/{status}")
+    public Response<String> updateStatus(@PathVariable("status") Integer status,
+                                         @RequestParam("ids") Long[] ids) {
+
+        setMealService.updateStatus(status, ids);
+        return Response.success("修改成功");
+    }
 }
