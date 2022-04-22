@@ -15,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,11 +36,15 @@ public class SetMealController {
     // 分页查询数据
     @GetMapping("/page")
     public Response<Page> page(@RequestParam(defaultValue = "1") Integer page,
-                               @RequestParam(defaultValue = "5") Integer pageSize) {
+                               @RequestParam(defaultValue = "5") Integer pageSize,
+                               @RequestParam(defaultValue = "",required = false) String name) {
         Page<Setmeal> setmealPage = new Page<>(page, pageSize);
         Page<SetmealDto> setmealDtoPage = new Page<>();
-
-        setMealService.page(setmealPage);
+        LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
+        if (name != null && name.length() > 0) {
+            wrapper.like(Setmeal::getName, name);
+        }
+        setMealService.page(setmealPage, wrapper);
         BeanUtils.copyProperties(setmealPage, setmealDtoPage,"records");
         setmealDtoPage.setRecords(setmealPage.getRecords().stream().map(setmeal -> {
             SetmealDto setmealDto = new SetmealDto();
@@ -94,5 +99,11 @@ public class SetMealController {
 
         setMealService.updateStatus(status, ids);
         return Response.success("修改成功");
+    }
+    // 删除套餐
+    @DeleteMapping
+    public Response<String> delete(@RequestParam("ids") Long[] ids) {
+        setMealService.removeByIds(Arrays.asList(ids));
+        return Response.success("删除成功");
     }
 }
