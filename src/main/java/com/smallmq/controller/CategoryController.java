@@ -8,10 +8,7 @@ import com.smallmq.service.CategoryService;
 import com.smallmq.utils.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -35,8 +32,23 @@ public class CategoryController {
         LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByAsc(Category::getSort);
         Page<Category> page1 = categoryService.page(pageInfo, wrapper);
-
         log.info("pageInfo success");
         return Response.success(page1);
     }
+
+    // 新增菜品分类
+    @PostMapping
+    public Response<Category> save(@RequestBody Category category) {
+        // 判断分类名称是否存在
+        LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Category::getName, category.getName());
+        Category category1 = categoryService.getOne(wrapper);
+        if (category1 != null) {
+            return Response.error("分类名称已存在");
+        }
+        category.setType(1);
+        categoryService.save(category);
+        return Response.success(category);
+    }
+
 }

@@ -111,9 +111,7 @@ public class EmployeeController {
         // 设置默认密码并进行md5加密
         String hex = DigestUtils.md5DigestAsHex("123456".getBytes());
         employee.setPassword(hex);
-        Long UserId = (Long)request.getSession().getAttribute("employee");
-        employee.setCreateUser(UserId);
-        employee.setUpdateUser(UserId);
+
 
         employeeService.save(employee);
         log.info("add success");

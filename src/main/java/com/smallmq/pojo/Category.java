@@ -16,6 +16,7 @@ public class Category implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @TableId
     private Long id;
 
 
@@ -53,7 +54,7 @@ public class Category implements Serializable {
 
 
     //是否删除
-    @TableLogic
-    private Integer isDeleted;
+    @TableLogic()
+    private Integer isDeleted = 0;
 
 }
