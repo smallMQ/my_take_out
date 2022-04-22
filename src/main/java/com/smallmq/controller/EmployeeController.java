@@ -1,6 +1,7 @@
 package com.smallmq.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.smallmq.pojo.Employee;
 import com.smallmq.service.EmployeeService;
@@ -71,14 +72,21 @@ public class EmployeeController {
      * 展示员工分页信息
      * @param page
      * @param pageSize
+     * @param name
      */
     @GetMapping("/page")
     public Response<Page> page(@RequestParam(defaultValue = "1") Integer page,
-                               @RequestParam(defaultValue = "10") Integer pageSize) {
+                               @RequestParam(defaultValue = "10") Integer pageSize,
+                                @RequestParam(defaultValue = "",required = false) String name) {
 
         log.info("page");
         Page<Employee> page1 = new Page<>(page, pageSize);
-        Page<Employee> employeePage = employeeService.page(page1);
+        LambdaQueryWrapper<Employee> wrapper = new LambdaQueryWrapper<>();
+        if (name != null && !name.equals("")) {
+            log.info("name is not null");
+            wrapper.like(Employee::getName, name);
+        }
+        Page<Employee> employeePage = employeeService.page(page1, wrapper);
         log.info("page success");
         return Response.success(employeePage);
     }
@@ -113,5 +121,21 @@ public class EmployeeController {
         employeeService.save(employee);
         log.info("add success");
         return Response.success("添加成功");
+    }
+
+    /**
+     * 根据id 设置用户状态
+     * @param employee
+     * @return
+     */
+    @PutMapping
+    public Response<String> SetStatus(@RequestBody Employee employee, HttpServletRequest request) {
+        log.info("SetStatus");
+        Long UserId = (Long)request.getSession().getAttribute("employee");
+        employee.setUpdateUser(UserId);
+        employee.setStatus(employee.getStatus());
+        employeeService.updateById(employee);
+        log.info("SetStatus success");
+        return Response.success("修改成功");
     }
 }

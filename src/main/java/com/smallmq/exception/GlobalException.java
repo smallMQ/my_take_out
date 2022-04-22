@@ -13,6 +13,7 @@ public class GlobalException extends Exception {
     @ExceptionHandler(value = Exception.class)
     public Response<String> GlobalException(Exception e) {
         log.error("GlobalException: {}", e.getMessage());
+        e.printStackTrace();
         return Response.error(e.getMessage());
     }
 }
