@@ -101,5 +101,13 @@ public class DishController {
         return Response.success("修改成功");
     }
 
+    // 修改状态
+    @PostMapping("status/{status}")
+    public Response<String> updateStatus(@PathVariable("status") Integer status,
+                                         @RequestParam("ids") Long[] ids) {
+
+        dishService.updateStatus(status, ids);
+        return Response.success("修改成功");
+    }
 
 }

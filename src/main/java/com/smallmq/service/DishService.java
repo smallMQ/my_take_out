@@ -8,4 +8,5 @@ public interface DishService extends IService<Dish> {
     public void saveWithFlavor(DishDto dishDto);
     public void updateWithFlavor(DishDto dishDto);
     public void deleteWithFlavor(DishDto dishDto);
+    public void updateStatus(Integer status, Long[] ids);
 }

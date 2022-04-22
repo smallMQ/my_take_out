@@ -41,4 +41,14 @@ public class DIshServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     public void deleteWithFlavor(DishDto dishDto) {
 
     }
+
+    @Override
+    public void updateStatus(Integer status, Long[] ids) {
+        Dish dish = new Dish();
+        dish.setStatus(status);
+        for (Long id : ids) {
+            dish.setId(id);
+            this.updateById(dish);
+        }
+    }
 }
