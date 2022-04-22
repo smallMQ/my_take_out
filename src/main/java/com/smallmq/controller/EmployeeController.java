@@ -54,4 +54,17 @@ public class EmployeeController {
         log.info("login success");
         return Response.success(employee1);
     }
+
+    /**
+     * 退出登录
+     * @param request
+     * @return
+     */
+    @PostMapping("/logout")
+    public Response<String> logout(HttpServletRequest request) {
+        log.info("logout");
+        request.getSession().removeAttribute("employee");
+        log.info("logout success");
+        return Response.success("退出成功");
+    }
 }
