@@ -87,7 +87,7 @@ public class EmployeeController {
             wrapper.like(Employee::getName, name);
         }
         Page<Employee> employeePage = employeeService.page(page1, wrapper);
-        log.info("page success");
+        log.info("pageEmployee success");
         return Response.success(employeePage);
     }
 
@@ -111,9 +111,6 @@ public class EmployeeController {
         // 设置默认密码并进行md5加密
         String hex = DigestUtils.md5DigestAsHex("123456".getBytes());
         employee.setPassword(hex);
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setStatus(1);
         Long UserId = (Long)request.getSession().getAttribute("employee");
         employee.setCreateUser(UserId);
         employee.setUpdateUser(UserId);
@@ -129,12 +126,12 @@ public class EmployeeController {
      * @return
      */
     @PutMapping
-    public Response<String> Set(@RequestBody Employee employee, HttpServletRequest request) {
-        log.info("Set employee");
+    public Response<String> update(@RequestBody Employee employee, HttpServletRequest request) {
+        log.info("update employee");
         Long UserId = (Long)request.getSession().getAttribute("employee");
         employee.setUpdateUser(UserId);
         employeeService.updateById(employee);
-        log.info("SetStatus success");
+        log.info("update success");
         return Response.success("修改成功");
     }
 
