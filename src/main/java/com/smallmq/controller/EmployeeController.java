@@ -51,6 +51,8 @@ public class EmployeeController {
         }
         // 将用户id存入到session中
         request.getSession().setAttribute("employee", employee1.getId());
+        // 设置session过期时间
+        request.getSession().setMaxInactiveInterval(60 * 60 * 24);
         log.info("login success");
         return Response.success(employee1);
     }

@@ -49,5 +49,24 @@ public class CategoryController {
         categoryService.save(category);
         return Response.success(category);
     }
+    // 删除分类
+    @DeleteMapping
+    public Response<Object> delete(@RequestParam("ids") Integer id) {
+        categoryService.removeById(id);
+        return Response.success("删除成功");
+    }
+    // 修改分类
+    @PutMapping
+    public Response<Category> update(@RequestBody Category category) {
+        // 判断分类名称是否存在
+        LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Category::getName, category.getName());
+        Category category1 = categoryService.getOne(wrapper);
+        if (category1 != null) {
+            return Response.error("分类名称已存在");
+        }
+        categoryService.updateById(category);
+        return Response.success(category);
+    }
 
 }
