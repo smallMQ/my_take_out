@@ -11,6 +11,7 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RestController
@@ -80,5 +81,37 @@ public class EmployeeController {
         Page<Employee> employeePage = employeeService.page(page1);
         log.info("page success");
         return Response.success(employeePage);
+    }
+
+    /**
+     * 添加员工
+     * @param employee
+     * @return
+     */
+    @PostMapping
+    public Response<String> add(@RequestBody Employee employee, HttpServletRequest request) {
+        log.info("add");
+        // 查询用户是否存在
+        LambdaQueryWrapper<Employee> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Employee::getUsername, employee.getUsername());
+        Employee employee1 = employeeService.getOne(wrapper);
+        if (employee1 != null) {
+            log.info("add fail username is exist");
+            return Response.error("用户名已存在");
+        }
+
+        // 设置默认密码并进行md5加密
+        String hex = DigestUtils.md5DigestAsHex("123456".getBytes());
+        employee.setPassword(hex);
+        employee.setCreateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setStatus(1);
+        Long UserId = (Long)request.getSession().getAttribute("employee");
+        employee.setCreateUser(UserId);
+        employee.setUpdateUser(UserId);
+
+        employeeService.save(employee);
+        log.info("add success");
+        return Response.success("添加成功");
     }
 }
