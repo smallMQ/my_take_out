@@ -1,16 +1,14 @@
 package com.smallmq.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.smallmq.pojo.Employee;
 import com.smallmq.service.EmployeeService;
 import com.smallmq.utils.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -66,5 +64,21 @@ public class EmployeeController {
         request.getSession().removeAttribute("employee");
         log.info("logout success");
         return Response.success("退出成功");
+    }
+
+    /**
+     * 展示员工分页信息
+     * @param page
+     * @param pageSize
+     */
+    @GetMapping("/page")
+    public Response<Page> page(@RequestParam(defaultValue = "1") Integer page,
+                               @RequestParam(defaultValue = "10") Integer pageSize) {
+
+        log.info("page");
+        Page<Employee> page1 = new Page<>(page, pageSize);
+        Page<Employee> employeePage = employeeService.page(page1);
+        log.info("page success");
+        return Response.success(employeePage);
     }
 }
