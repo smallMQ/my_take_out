@@ -117,4 +117,12 @@ public class DishController {
         dishService.removeByIds(Arrays.asList(ids));
         return Response.success("删除成功");
     }
+    // 根据分类id查询菜品
+    @GetMapping("/list")
+    public Response<List<Dish>> list(@RequestParam("categoryId") Long categoryId) {
+        LambdaQueryWrapper<Dish> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Dish::getCategoryId, categoryId);
+        List<Dish> list = dishService.list(wrapper);
+        return Response.success(list);
+    }
 }
