@@ -36,7 +36,7 @@ public class CategoryController {
         return Response.success(page1);
     }
 
-    // 新增菜品分类
+    // 新增菜品/套餐分类
     @PostMapping
     public Response<Category> save(@RequestBody Category category) {
         // 判断分类名称是否存在
@@ -46,7 +46,6 @@ public class CategoryController {
         if (category1 != null) {
             return Response.error("分类名称已存在");
         }
-        category.setType(1);
         categoryService.save(category);
         return Response.success(category);
     }
