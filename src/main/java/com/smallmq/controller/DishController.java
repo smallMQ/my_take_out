@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.smallmq.dto.DishDto;
 import com.smallmq.pojo.Dish;
+import com.smallmq.service.DishFlavorService;
 import com.smallmq.service.DishService;
 import com.smallmq.utils.Response;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,9 @@ public class DishController {
     @Autowired
     private DishService dishService;
 
+    @Autowired
+    private DishFlavorService dishFlavorService;
+
     @GetMapping("page")
     public Response<Page> page(@RequestParam(value = "page", defaultValue = "1") Integer page,
                                @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
@@ -35,6 +40,13 @@ public class DishController {
         log.info("pageInfo:{}", page1);
         return Response.success(page1);
 
+    }
+
+    @PostMapping
+    public Response<String> save(@RequestBody DishDto dishDto) {
+        log.info("dishDto:{}", dishDto);
+        dishService.saveWithFlavor(dishDto);
+        return Response.success("添加成功");
     }
 
 
