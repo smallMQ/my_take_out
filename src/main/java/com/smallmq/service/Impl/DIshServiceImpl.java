@@ -1,9 +1,11 @@
 package com.smallmq.service.Impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.smallmq.dto.DishDto;
 import com.smallmq.mapper.DishMapper;
 import com.smallmq.pojo.Dish;
+import com.smallmq.pojo.DishFlavor;
 import com.smallmq.service.DishFlavorService;
 import com.smallmq.service.DishService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +32,10 @@ public class DIshServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     @Override
     public void updateWithFlavor(DishDto dishDto) {
         this.updateById(dishDto);
-        dishFlavorService.deleteByDishId(dishDto.getId());
+        LambdaQueryWrapper<DishFlavor> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(DishFlavor::getDishId, dishDto.getId());
+        dishFlavorService.remove(wrapper);
+
         dishDto.getFlavors().forEach(flavor -> {
             flavor.setDishId(dishDto.getId());
         });

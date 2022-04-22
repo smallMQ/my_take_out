@@ -1,9 +1,12 @@
 package com.smallmq.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.smallmq.dto.SetmealDto;
 import com.smallmq.pojo.Setmeal;
+import com.smallmq.pojo.SetmealDish;
 import com.smallmq.service.CategoryService;
+import com.smallmq.service.SetMealDishService;
 import com.smallmq.service.SetMealService;
 import com.smallmq.utils.Response;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -25,6 +29,8 @@ public class SetMealController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private SetMealDishService setMealDishService;
 
     // 分页查询数据
     @GetMapping("/page")
@@ -53,5 +59,31 @@ public class SetMealController {
         setMealService.saveWithDishes(setmealDto);
         return Response.success("添加成功");
     }
+    // 修改套餐
+    @PutMapping
+    public Response<String> update(@RequestBody SetmealDto setmealDto) {
+        setMealService.updateWithDishes(setmealDto);
+        return Response.success("修改成功");
+    }
 
+    // id查询
+    @GetMapping("/{id}")
+    public Response<SetmealDto> getById(@PathVariable("id") Long id) {
+        SetmealDto setmealDto = new SetmealDto();
+
+        Setmeal setmeal = setMealService.getById(id);
+        log.warn(setmeal.toString());
+
+        LambdaQueryWrapper<SetmealDish> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SetmealDish::getSetmealId, id);
+        List<SetmealDish> setmealDish = setMealDishService.list(wrapper);
+
+
+        log.warn(setmealDish.toString());
+        BeanUtils.copyProperties(setmeal, setmealDto);
+        setmealDto.setSetmealDishes(setmealDish);
+        log.warn(setmealDto.toString());
+
+        return Response.success(setmealDto);
+    }
 }
