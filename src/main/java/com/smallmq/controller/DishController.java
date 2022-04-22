@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -110,4 +111,10 @@ public class DishController {
         return Response.success("修改成功");
     }
 
+    // 删除
+    @DeleteMapping
+    public Response<String> delete(@RequestParam("ids") Long[] ids) {
+        dishService.removeByIds(Arrays.asList(ids));
+        return Response.success("删除成功");
+    }
 }
