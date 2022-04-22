@@ -124,18 +124,34 @@ public class EmployeeController {
     }
 
     /**
-     * 根据id 设置用户状态
+     * 根据id 设置用户信息
      * @param employee
      * @return
      */
     @PutMapping
-    public Response<String> SetStatus(@RequestBody Employee employee, HttpServletRequest request) {
-        log.info("SetStatus");
+    public Response<String> Set(@RequestBody Employee employee, HttpServletRequest request) {
+        log.info("Set employee");
         Long UserId = (Long)request.getSession().getAttribute("employee");
         employee.setUpdateUser(UserId);
-        employee.setStatus(employee.getStatus());
         employeeService.updateById(employee);
         log.info("SetStatus success");
         return Response.success("修改成功");
+    }
+
+    /**
+     * 根据id 查询员工信息
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public Response<Employee> get(@PathVariable("id") Long id) {
+        log.info("get id is {}", id);
+        Employee employee = employeeService.getById(id);
+        if(employee == null) {
+            log.info("get fail");
+            return Response.error("查询失败");
+        }
+        log.info("get success");
+        return Response.success(employee);
     }
 }
