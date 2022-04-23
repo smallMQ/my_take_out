@@ -11,6 +11,7 @@ import com.smallmq.service.SetMealDishService;
 import com.smallmq.service.SetMealService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SetMealServiceImpl extends ServiceImpl<SetMealMapper, Setmeal> implements SetMealService {
@@ -20,6 +21,7 @@ public class SetMealServiceImpl extends ServiceImpl<SetMealMapper, Setmeal> impl
     @Autowired
     private SetMealMapper setMealMapper;
 
+    @Transactional
     @Override
     public void saveWithDishes(SetmealDto setmealDto) {
         this.save(setmealDto);
@@ -29,7 +31,7 @@ public class SetMealServiceImpl extends ServiceImpl<SetMealMapper, Setmeal> impl
         });
         setMealDishService.saveBatch(setmealDto.getSetmealDishes());
         }
-
+    @Transactional
     @Override
     public void updateWithDishes(SetmealDto setmealDto) {
         this.updateById(setmealDto);
@@ -46,6 +48,7 @@ public class SetMealServiceImpl extends ServiceImpl<SetMealMapper, Setmeal> impl
 
     }
 
+    @Transactional
     @Override
     public void updateStatus(Integer status, Long[] ids) {
         Setmeal setmeal = new Setmeal();

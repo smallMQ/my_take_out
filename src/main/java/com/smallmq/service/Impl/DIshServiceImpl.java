@@ -29,6 +29,7 @@ public class DIshServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         dishFlavorService.saveBatch(dishDto.getFlavors());
     }
 
+    @Transactional
     @Override
     public void updateWithFlavor(DishDto dishDto) {
         this.updateById(dishDto);
@@ -41,12 +42,7 @@ public class DIshServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         });
         dishFlavorService.saveBatch(dishDto.getFlavors());
     }
-
-    @Override
-    public void deleteWithFlavor(DishDto dishDto) {
-
-    }
-
+    @Transactional
     @Override
     public void updateStatus(Integer status, Long[] ids) {
         Dish dish = new Dish();

@@ -35,12 +35,15 @@ public class LoginCheckFilter implements Filter {
 
         // 放行urls
         String[] urls = new String[]{
+                "/front/page/login.html",
                 "/employee/login",
                 "/employee/register",
                 "/employee/logout",
                 "/backend/**",
                 "/front/**",
                 "/common/**",
+                "/user/login",
+                "/user/sendMsg",
         };
         // 校验是否放行
         boolean check = Check(urls, request.getRequestURI());
@@ -53,6 +56,12 @@ public class LoginCheckFilter implements Filter {
         if(request.getSession().getAttribute("employee")!=null){
             filterChain.doFilter(request, response);
             log.info("LoginCheckFilter doFilter pass");
+            return;
+        }
+        // 校验用户
+        if(request.getSession().getAttribute("user")!=null){
+            filterChain.doFilter(request, response);
+            log.info("LoginCheckFilter doFilter pass user");
             return;
         }
         // 未登录返回NOTLOGIN

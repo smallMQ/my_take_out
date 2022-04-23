@@ -81,7 +81,7 @@
     <script src="../../backend/plugins/axios/axios.min.js"></script>
     <script src="./../js/request.js"></script>
     <script src="./../api/order.js"></script>
-    <script src="./../api/login.js"></script>
+    <script src="../api/login.js"></script>
     <script>
         new Vue({
             el:"#user",
@@ -172,7 +172,7 @@
                     const res = await orderAgainApi({id:this.order[0].id})
                     if(res.code === 1){
                         window.requestAnimationFrame(()=>{
-                            window.location.href = '/front/index.html'
+                            window.location.href = 'index.html'
                         }) 
                     }else{
                         this.$notify({ type:'warning', message:res.msg});
@@ -182,7 +182,7 @@
                     const res = await loginoutApi()
                     if(res.code === 1){
                         window.requestAnimationFrame(()=>{
-                            window.location.href = '/front/page/login.html'
+                            window.location.href = 'login.html'
                         }) 
                     }else{
                         this.$notify({ type:'warning', message:res.msg});
