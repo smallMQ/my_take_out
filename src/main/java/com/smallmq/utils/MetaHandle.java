@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 
+
 @Component
 @Slf4j
 public class MetaHandle implements MetaObjectHandler {
@@ -21,8 +22,8 @@ public class MetaHandle implements MetaObjectHandler {
         log.info(metaObject.toString());
         metaObject.setValue("createTime", LocalDateTime.now());
         metaObject.setValue("updateTime", LocalDateTime.now());
-        metaObject.setValue("createUser", session.getAttribute("employee"));
-        metaObject.setValue("updateUser", session.getAttribute("employee"));
+        metaObject.setValue("createUser", session.getAttribute("employee") != null?session.getAttribute("employee"):session.getAttribute("user"));
+        metaObject.setValue("updateUser", session.getAttribute("employee") != null?session.getAttribute("employee"):session.getAttribute("user"));
 
     }
 
@@ -31,7 +32,7 @@ public class MetaHandle implements MetaObjectHandler {
         log.info("updateFill");
         log.info(metaObject.toString());
         metaObject.setValue("updateTime", LocalDateTime.now());
-        metaObject.setValue("updateUser", session.getAttribute("employee"));
+        metaObject.setValue("updateUser", session.getAttribute("employee")!= null?session.getAttribute("employee"):session.getAttribute("user"));
 
 
     }
