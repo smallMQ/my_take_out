@@ -108,4 +108,20 @@ public class SetMealController {
         setMealService.removeByIds(Arrays.asList(ids));
         return Response.success("删除成功");
     }
+    // list
+    @GetMapping("/list")
+    public Response<List<Setmeal>> list(
+            @RequestParam Integer categoryId,
+            @RequestParam Integer status
+    ) {
+        LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
+        if (categoryId != null) {
+            wrapper.eq(Setmeal::getCategoryId, categoryId);
+        }
+        if (status != null) {
+            wrapper.eq(Setmeal::getStatus, status);
+        }
+        List<Setmeal> setmealList = setMealService.list(wrapper);
+        return Response.success(setmealList);
+    }
 }

@@ -73,9 +73,12 @@ public class CategoryController {
 
     // list
     @GetMapping("/list")
-    public Response<List<Category>> list(@RequestParam(defaultValue = "1") Integer type) {
+    public Response<List<Category>> list(@RequestParam(required = false) Integer type) {
         LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Category::getType, type);
+        if (type != null) {
+            wrapper.eq(Category::getType, type);
+
+        }
         wrapper.orderByAsc(Category::getSort);
         return Response.success(categoryService.list(wrapper));
     }
