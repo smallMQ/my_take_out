@@ -39,12 +39,12 @@ public class UserController {
     }
     // 登录
     @RequestMapping("/login")
-    public Response<User> login(
-            @RequestBody Map map,
-
+    public Response<Object> login(
+            @RequestBody Map<String,String> map,
             HttpSession session
     ) {
         log.info("login");
+        log.info(map.toString());
         String phone = (String) map.get("phone");
         String code = (String) map.get("code");
         String sms = (String) session.getAttribute(phone);

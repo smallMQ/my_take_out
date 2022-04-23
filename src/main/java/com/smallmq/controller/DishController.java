@@ -119,10 +119,21 @@ public class DishController {
     }
     // 根据分类id查询菜品
     @GetMapping("/list")
-    public Response<List<Dish>> list(@RequestParam("categoryId") Long categoryId) {
+    public Response<List<DishDto>> list(@RequestParam("categoryId") Long categoryId,
+                                        @RequestParam(value = "status",required = false) Integer status) {
         LambdaQueryWrapper<Dish> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Dish::getCategoryId, categoryId);
+        if (status != null) {
+            wrapper.eq(Dish::getStatus, status);
+        }
+
         List<Dish> list = dishService.list(wrapper);
-        return Response.success(list);
+        List<DishDto> dishDtos = list.stream().map(dish -> {
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(dish, dishDto);
+            dishDto.setFlavors(dishFlavorService.list(new LambdaQueryWrapper<DishFlavor>().eq(DishFlavor::getDishId, dish.getId())));
+            return dishDto;
+        }).collect(Collectors.toList());
+        return Response.success(dishDtos);
     }
 }

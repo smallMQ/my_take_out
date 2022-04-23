@@ -49,24 +49,24 @@ public class LoginCheckFilter implements Filter {
         boolean check = Check(urls, request.getRequestURI());
         if (check) {
             filterChain.doFilter(request, response);
-            log.info("LoginCheckFilter doFilter pass");
+            log.info("check pass");
             return;
         }
         // 校验是否登录
         if(request.getSession().getAttribute("employee")!=null){
             filterChain.doFilter(request, response);
-            log.info("LoginCheckFilter doFilter pass");
+            log.info("employee pass");
             return;
         }
         // 校验用户
         if(request.getSession().getAttribute("user")!=null){
             filterChain.doFilter(request, response);
-            log.info("LoginCheckFilter doFilter pass user");
+            log.info("pass user");
             return;
         }
         // 未登录返回NOTLOGIN
         response.getWriter().write(JSON.toJSONString(Response.error("NOTLOGIN")));
-        log.info("LoginCheckFilter doFilter NOTLOGIN");
+        log.info("NOTLOGIN");
         return;
 
 

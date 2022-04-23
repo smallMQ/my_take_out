@@ -73,7 +73,7 @@ public class CategoryController {
 
     // list
     @GetMapping("/list")
-    public Response<List<Category>> list(@RequestParam Integer type) {
+    public Response<List<Category>> list(@RequestParam(defaultValue = "1") Integer type) {
         LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Category::getType, type);
         wrapper.orderByAsc(Category::getSort);
