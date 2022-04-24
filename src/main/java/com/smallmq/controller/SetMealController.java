@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -95,6 +97,7 @@ public class SetMealController {
 
     // 修改套餐状态
     @PostMapping("/status/{status}")
+    @CacheEvict(value = "setmeal", allEntries = true)
     public Response<String> updateStatus(@PathVariable("status") Integer status,
                                          @RequestParam("ids") Long[] ids) {
 
@@ -104,12 +107,14 @@ public class SetMealController {
     // 删除套餐
     @Transactional
     @DeleteMapping
+    @CacheEvict(value = "setmeal", allEntries = true)
     public Response<String> delete(@RequestParam("ids") Long[] ids) {
         setMealService.removeByIds(Arrays.asList(ids));
         return Response.success("删除成功");
     }
     // list
     @GetMapping("/list")
+    @Cacheable(value = "setmeal", key = "'setmeal:' + #categoryId + ':#status'")
     public Response<List<Setmeal>> list(
             @RequestParam Integer categoryId,
             @RequestParam Integer status
