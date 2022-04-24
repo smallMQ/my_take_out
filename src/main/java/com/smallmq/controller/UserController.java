@@ -8,17 +8,21 @@ import com.smallmq.utils.Response;
 import com.smallmq.utils.SmsUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @Slf4j
 @RequestMapping("/user")
 public class UserController {
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
     private UserService userService;
@@ -34,7 +38,9 @@ public class UserController {
         if (sms == null) {
             return Response.error("发送失败");
         }
-        session.setAttribute(user.getPhone(),sms);
+//        session.setAttribute(user.getPhone(),sms);
+        // 生成key
+        stringRedisTemplate.opsForValue().set(user.getPhone(),sms,5, TimeUnit.MINUTES);
         return Response.success("发送成功");
     }
     // 登录
@@ -47,7 +53,9 @@ public class UserController {
         log.info(map.toString());
         String phone = (String) map.get("phone");
         String code = (String) map.get("code");
-        String sms = (String) session.getAttribute(phone);
+//        String sms = (String) session.getAttribute(phone);
+        // 获取key
+        String sms = stringRedisTemplate.opsForValue().get(phone);
         if (sms == null) {
             return Response.error("验证码已过期");
         }
@@ -66,6 +74,8 @@ public class UserController {
             userService.save(user);
         }
         session.setAttribute("user",user.getId());
+        // 登陆成功删除key
+        stringRedisTemplate.delete(phone);
         return Response.success(user);
     }
 }
