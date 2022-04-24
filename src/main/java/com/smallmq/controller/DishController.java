@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -82,6 +83,9 @@ public class DishController {
     public Response<String> save(@RequestBody DishDto dishDto) {
         log.info("dishDto:{}", dishDto);
         dishService.saveWithFlavor(dishDto);
+        String key = "dish:list:" + dishDto.getCategoryId() + ":*";
+        Set keys = redisTemplate.keys(key);
+        redisTemplate.delete(keys);
         return Response.success("添加成功");
     }
 
@@ -106,6 +110,11 @@ public class DishController {
     @PutMapping
     public Response<String> update(@RequestBody DishDto dishDto) {
         dishService.updateWithFlavor(dishDto);
+
+        String key = "dish:list:" + dishDto.getCategoryId() + ":*";
+        Set keys = redisTemplate.keys(key);
+        redisTemplate.delete(keys);
+
         log.info("dishDto:{}", dishDto);
         return Response.success("修改成功");
     }
