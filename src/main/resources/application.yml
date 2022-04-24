@@ -30,6 +30,6 @@ image:
   file-path: D:\code\java_code\project\reggie_take_out\src\main\resources\image\
 logging:
   level:
-    root: warn
+    root: info
   file:
     name: reggie_take_out.log

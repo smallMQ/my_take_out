@@ -15,11 +15,14 @@ import com.smallmq.utils.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,6 +30,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/dish")
 public class DishController {
 
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
     @Autowired
     private DishService dishService;
 
@@ -121,6 +129,15 @@ public class DishController {
     @GetMapping("/list")
     public Response<List<DishDto>> list(@RequestParam("categoryId") Long categoryId,
                                         @RequestParam(value = "status",required = false) Integer status) {
+        List<DishDto> dishDtos = null;
+        String key = "dish:list:" + categoryId + ":" + status;
+        // 先查询缓存
+        dishDtos = (List<DishDto>) redisTemplate.opsForValue().get(key);
+        if (dishDtos != null) {
+            log.info("从缓存中查询");
+            return Response.success(dishDtos);
+        }
+        // 查询数据库
         LambdaQueryWrapper<Dish> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Dish::getCategoryId, categoryId);
         if (status != null) {
@@ -128,12 +145,15 @@ public class DishController {
         }
 
         List<Dish> list = dishService.list(wrapper);
-        List<DishDto> dishDtos = list.stream().map(dish -> {
+        dishDtos = list.stream().map(dish -> {
             DishDto dishDto = new DishDto();
             BeanUtils.copyProperties(dish, dishDto);
             dishDto.setFlavors(dishFlavorService.list(new LambdaQueryWrapper<DishFlavor>().eq(DishFlavor::getDishId, dish.getId())));
             return dishDto;
         }).collect(Collectors.toList());
+        // 将数据存入redis
+        redisTemplate.opsForValue().set(key, dishDtos, 60, TimeUnit.MINUTES);
+        log.info("从数据库中查询");
         return Response.success(dishDtos);
     }
 }
