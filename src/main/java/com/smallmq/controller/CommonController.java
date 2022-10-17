@@ -10,9 +10,10 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-
+/*
+ * 图片上传
+ */
 @RestController
 @RequestMapping("/common")
 @Slf4j
@@ -38,6 +39,7 @@ public class CommonController {
         String uuid = java.util.UUID.randomUUID().toString();
         // 生成文件名
         String fileName = time + uuid + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+        // 生成到指定目录
         file.transferTo(new File(FILE_PATH + fileName));
         System.out.println(FILE_PATH + file.getOriginalFilename() );
         log.info("文件上传");
@@ -50,6 +52,7 @@ public class CommonController {
         FileInputStream fileInputStream = new FileInputStream(FILE_PATH + name);
         ServletOutputStream outputStream = response.getOutputStream();
         response.setContentType("image/jpeg");
+        // 缓冲读取
         byte[] buffer = new byte[1024];
         int len = 0;
         while ((len = fileInputStream.read(buffer)) != -1) {
