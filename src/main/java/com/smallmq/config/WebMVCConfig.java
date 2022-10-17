@@ -13,14 +13,14 @@ import java.util.List;
 @Configuration
 @Slf4j
 public class WebMVCConfig extends WebMvcConfigurationSupport {
-
+    // 配置自定义静态资源映射
     @Override
     public void addResourceHandlers(org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
         registry.addResourceHandler("/backend/**").addResourceLocations("classpath:/backend/");
         registry.addResourceHandler("/front/**").addResourceLocations("classpath:/front/");
     }
-
+    // 配置自定义消息转换器
     @Override
     protected void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         log.info("扩展消息转换器...");

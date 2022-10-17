@@ -44,14 +44,13 @@ public class AddressBookController {
     public Response<AddressBook> setDefault(@RequestBody AddressBook addressBook,
                                             HttpSession session) {
         log.info("addressBook:{}", addressBook);
+        // 先将所有地址设置为非默认
         LambdaUpdateWrapper<AddressBook> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(AddressBook::getUserId, session.getAttribute("user"));
         wrapper.set(AddressBook::getIsDefault, 0);
-        //SQL:update address_book set is_default = 0 where user_id = ?
         addressBookService.update(wrapper);
-
+        // 再将指定地址设置为默认
         addressBook.setIsDefault(1);
-        //SQL:update address_book set is_default = 1 where id = ?
         addressBookService.updateById(addressBook);
         return Response.success(addressBook);
     }
@@ -76,11 +75,12 @@ public class AddressBookController {
     public Response<AddressBook> getDefault(
             HttpSession session
     ) {
+
         LambdaQueryWrapper<AddressBook> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(AddressBook::getUserId, session.getAttribute("user"));
         queryWrapper.eq(AddressBook::getIsDefault, 1);
 
-        //SQL:select * from address_book where user_id = ? and is_default = 1
+        // 查询默认地址
         AddressBook addressBook = addressBookService.getOne(queryWrapper);
 
         if (null == addressBook) {
@@ -96,15 +96,15 @@ public class AddressBookController {
     @GetMapping("/list")
     public Response<List<AddressBook>> list(AddressBook addressBook,
                                             HttpSession session) {
+        // 通过session获取用户id
         addressBook.setUserId((Long)session.getAttribute("user"));
         log.info("addressBook:{}", addressBook);
 
         //条件构造器
         LambdaQueryWrapper<AddressBook> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(null != addressBook.getUserId(), AddressBook::getUserId, addressBook.getUserId());
+        queryWrapper.eq(addressBook.getUserId() != null, AddressBook::getUserId, addressBook.getUserId());
         queryWrapper.orderByDesc(AddressBook::getUpdateTime);
 
-        //SQL:select * from address_book where user_id = ? order by update_time desc
         return Response.success(addressBookService.list(queryWrapper));
     }
 
