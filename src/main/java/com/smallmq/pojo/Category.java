@@ -53,8 +53,6 @@ public class Category implements Serializable {
     private Long updateUser;
 
 
-    //是否删除
-    @TableLogic()
-    private Integer isDeleted = 0;
+
 
 }

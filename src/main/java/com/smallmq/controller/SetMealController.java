@@ -116,7 +116,7 @@ public class SetMealController {
     @GetMapping("/list")
     @Cacheable(value = "setmeal", key = "'setmeal:' + #categoryId + ':#status'")
     public Response<List<Setmeal>> list(
-            @RequestParam Integer categoryId,
+            @RequestParam Long categoryId,
             @RequestParam Integer status
     ) {
         LambdaQueryWrapper<Setmeal> wrapper = new LambdaQueryWrapper<>();
