@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+/**
+ * 分类管理
+ */
 @Slf4j
 @RestController
 @RequestMapping("/category")
@@ -29,16 +31,18 @@ public class CategoryController {
     @GetMapping("/page")
     public Response<Page> page(@RequestParam(defaultValue = "1") Integer page,
                                @RequestParam(defaultValue = "10") Integer pageSize) {
-
+        // 创建分页对象
         Page<Category> pageInfo = new Page(page, pageSize);
+        // 创建查询条件
         LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByAsc(Category::getSort);
+        // 查询
         Page<Category> page1 = categoryService.page(pageInfo, wrapper);
         log.info("pageInfo success");
         return Response.success(page1);
     }
 
-    // 新增菜品/套餐分类
+    // 新增套餐分类
     @PostMapping
     public Response<Category> save(@RequestBody Category category) {
         // 判断分类名称是否存在
@@ -71,7 +75,7 @@ public class CategoryController {
         return Response.success(category);
     }
 
-    // list
+    // 查询所有分类
     @GetMapping("/list")
     public Response<List<Category>> list(@RequestParam(required = false) Integer type) {
         LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
