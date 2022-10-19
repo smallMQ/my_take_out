@@ -103,11 +103,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
 
         orders.setAmount(new BigDecimal(amount.get()));
         this.updateById(orders);
-        // 用户余额减少
-        user.setBalance(user.getBalance() - amount.get());
-        // 判断用户余额是否小于0
-        if (user.getBalance() < 0) {
-            throw new RuntimeException("余额不足");
+        // 通过用户id加锁
+        synchronized (user.getId().toString().intern()) {
+            // 用户余额减少
+            user.setBalance(user.getBalance() - amount.get());
+            // 判断用户余额是否小于0
+            if (user.getBalance() < 0) {
+                throw new RuntimeException("余额不足");
+            }
         }
         userService.updateById(user);
 

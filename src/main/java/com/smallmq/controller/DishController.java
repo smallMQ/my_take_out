@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
 /**
  * 菜品管理
  */
@@ -34,12 +35,12 @@ public class DishController {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
     @Autowired
     private DishService dishService;
 
     @Autowired
     private DishFlavorService dishFlavorService;
-
 
     @Autowired
     private CategoryService categoryService;
@@ -58,7 +59,7 @@ public class DishController {
         }
         dishService.page(pageInfo, wrapper);
         // 将数据转换为DishDto
-        BeanUtils.copyProperties(pageInfo, dishDtoPage,"records");
+        BeanUtils.copyProperties(pageInfo, dishDtoPage, "records");
 
         List<Dish> records = pageInfo.getRecords();
         // 将Dish的records转换为DishDto的records,并增加分类名称
@@ -104,6 +105,7 @@ public class DishController {
 
         return Response.success(dishDto);
     }
+
     // 根据id修改数据
     @PutMapping
     public Response<String> update(@RequestBody DishDto dishDto) {
@@ -132,10 +134,11 @@ public class DishController {
         dishService.removeByIds(Arrays.asList(ids));
         return Response.success("删除成功");
     }
+
     // 根据分类id查询菜品
     @GetMapping("/list")
     public Response<List<DishDto>> list(@RequestParam("categoryId") Long categoryId,
-                                        @RequestParam(value = "status",required = false) Integer status) {
+                                        @RequestParam(value = "status", required = false) Integer status) {
         List<DishDto> dishDtos = null;
         String key = "dish:list:" + categoryId + ":" + status;
         // 先查询缓存

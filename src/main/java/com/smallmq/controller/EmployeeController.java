@@ -1,7 +1,6 @@
 package com.smallmq.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.smallmq.pojo.Employee;
 import com.smallmq.service.EmployeeService;
@@ -12,7 +11,6 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
 
 @Slf4j
 @RestController
@@ -23,7 +21,8 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     /**
-     * 登录
+     * 员工的登录
+     *
      * @param employee
      * @return
      */
