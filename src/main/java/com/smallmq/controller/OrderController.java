@@ -67,7 +67,7 @@ public class OrderController {
         Page<Orders> ordersPage = new Page<>(page, pageSize);
         Long userId = (Long) session.getAttribute("user");
         LambdaQueryWrapper<Orders> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Orders::getUserId, userId);
+        wrapper.eq(Orders::getUserId, userId).orderByDesc(Orders::getOrderTime);
         Page<Orders> orders = orderService.page(ordersPage, wrapper);
         return Response.success(orders);
     }

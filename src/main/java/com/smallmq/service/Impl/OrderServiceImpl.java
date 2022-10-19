@@ -1,11 +1,11 @@
 package com.smallmq.service.Impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.smallmq.mapper.OrderMapper;
 import com.smallmq.pojo.*;
 import com.smallmq.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,13 +31,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
     @Autowired
     private OrderDetailService orderDetailService;
 
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     @Override
     @Transactional
     public void submit(Orders orders) {
         // 查询用户购物车中的商品
-        LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(ShoppingCart::getUserId, orders.getUserId());
-        List<ShoppingCart> list = shoppingCartService.list(wrapper);
+//        LambdaQueryWrapper<ShoppingCart> wrapper = new LambdaQueryWrapper<>();
+//        wrapper.eq(ShoppingCart::getUserId, orders.getUserId());
+//        List<ShoppingCart> list = shoppingCartService.list(wrapper);
+        // 从redis查询用户购物车中的商品
+        List<ShoppingCart> list = redisTemplate.opsForList().range("shoppingCart:" + orders.getUserId(), 0, -1);
+
         if (list.size() <= 0 || list == null) {
             throw new RuntimeException("购物车中没有商品");
         }
@@ -46,17 +52,16 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         // 查询地址信息
         AddressBook addressBook = addressBookService.getById(orders.getAddressBookId());
 
-        if(user == null){
+        if (user == null) {
             throw new RuntimeException("用户不存在");
         }
-        if(addressBook == null){
+        if (addressBook == null) {
             throw new RuntimeException("地址不存在");
         }
         // 插入订单号
         Long orderId = System.currentTimeMillis();
 
         AtomicInteger amount = new AtomicInteger(0);
-
 
 
         orders.setNumber(orderId + "");
@@ -90,11 +95,16 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
             amount.addAndGet(item.getAmount().multiply(new BigDecimal(item.getNumber())).intValue());
             return orderDetail;
         }).collect(Collectors.toList());
+
+        orders.setAmount(new BigDecimal(amount.get()));
+        this.updateById(orders);
+
+
         //向订单明细表插入数据，多条数据
         orderDetailService.saveBatch(orderDetails);
 
         //清空购物车数据
-        shoppingCartService.remove(wrapper);
+        redisTemplate.delete("shoppingCart:" + orders.getUserId());
 
     }
 }

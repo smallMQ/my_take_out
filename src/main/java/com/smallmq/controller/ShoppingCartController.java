@@ -2,7 +2,6 @@ package com.smallmq.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.smallmq.pojo.ShoppingCart;
-import com.smallmq.service.SetMealDishService;
 import com.smallmq.service.ShoppingCartService;
 import com.smallmq.utils.Response;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@RequestMapping("/shoppingCart")
+@RequestMapping("/shoppingCart2")
 public class ShoppingCartController {
 
     @Autowired
