@@ -61,7 +61,7 @@ public class LoginCheckFilter implements Filter {
         // 校验用户
         if(request.getSession().getAttribute("user")!=null){
             filterChain.doFilter(request, response);
-            log.info("pass user");
+            log.info("user pass");
             return;
         }
         // 未登录返回NOTLOGIN

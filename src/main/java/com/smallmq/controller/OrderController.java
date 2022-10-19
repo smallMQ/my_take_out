@@ -41,6 +41,8 @@ public class OrderController {
         if (startDate != null && endDate != null) {
             wrapper.between(Orders::getOrderTime, startDate, endDate);
         }
+        // 按照订单时间倒序
+        wrapper.orderByDesc(Orders::getOrderTime);
         Page<Orders> orders = orderService.page(ordersPage, wrapper);
         return Response.success(orders);
     }

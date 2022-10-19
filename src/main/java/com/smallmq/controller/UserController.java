@@ -73,9 +73,19 @@ public class UserController {
             user.setStatus(1);
             userService.save(user);
         }
-        session.setAttribute("user",user.getId());
+        session.setAttribute("user", user.getId());
         // 登陆成功删除key
         stringRedisTemplate.delete(phone);
         return Response.success(user);
+    }
+
+    // 退出
+    @RequestMapping("/loginout")
+    public Response<Object> logout(
+            HttpSession session
+    ) {
+        log.info("logout");
+        session.removeAttribute("user");
+        return Response.success("退出成功");
     }
 }

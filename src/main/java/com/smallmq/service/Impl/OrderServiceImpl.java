@@ -103,6 +103,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
 
         orders.setAmount(new BigDecimal(amount.get()));
         this.updateById(orders);
+
+
+        //向订单明细表插入数据，多条数据
+        orderDetailService.saveBatch(orderDetails);
+
         // 通过用户id加锁
         synchronized (user.getId().toString().intern()) {
             // 用户余额减少
@@ -114,9 +119,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         }
         userService.updateById(user);
 
-
-        //向订单明细表插入数据，多条数据
-        orderDetailService.saveBatch(orderDetails);
 
         //清空购物车数据
         redisTemplate.delete("shoppingCart:" + orders.getUserId());
