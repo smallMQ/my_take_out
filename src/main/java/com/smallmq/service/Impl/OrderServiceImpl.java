@@ -51,12 +51,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
         User user = userService.getById(orders.getUserId());
         // 查询地址信息
         AddressBook addressBook = addressBookService.getById(orders.getAddressBookId());
-
         if (user == null) {
             throw new RuntimeException("用户不存在");
         }
         if (addressBook == null) {
             throw new RuntimeException("地址不存在");
+        }
+        // 判断余额是否充足
+        BigDecimal amount1 = orders.getAmount();
+        Integer amount2 = user.getBalance();
+        if (amount1.compareTo(new BigDecimal(amount2)) > 0) {
+            throw new RuntimeException("余额不足");
         }
         // 插入订单号
         Long orderId = System.currentTimeMillis();
@@ -98,6 +103,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Orders> implement
 
         orders.setAmount(new BigDecimal(amount.get()));
         this.updateById(orders);
+        // 用户余额减少
+        user.setBalance(user.getBalance() - amount.get());
+        // 判断用户余额是否小于0
+        if (user.getBalance() < 0) {
+            throw new RuntimeException("余额不足");
+        }
+        userService.updateById(user);
 
 
         //向订单明细表插入数据，多条数据

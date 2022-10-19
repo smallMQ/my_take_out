@@ -187,9 +187,10 @@
                     },
                     async goToPaySuccess(){
                         const params = {
-                            remark:this.note,
-                            payMethod:1,
-                            addressBookId:this.address.id
+                            remark: this.note,
+                            payMethod: 1,
+                            addressBookId: this.address.id,
+                            amount: this.goodsPrice
                         }
                         const res = await addOrderApi(params)
                         if(res.code === 1){

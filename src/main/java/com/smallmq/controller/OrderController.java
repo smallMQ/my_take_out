@@ -72,5 +72,13 @@ public class OrderController {
         return Response.success(orders);
     }
 
+    // 修改订单状态
+    @PutMapping
+    public Response<String> update(@RequestBody Orders orders) {
+        log.info("orders={}", orders);
+        orderService.updateById(orders);
+        return Response.success("修改成功");
+    }
+
 }
 
